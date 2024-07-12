@@ -4,7 +4,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const User = require('../models/user');
-const { signup, login, logout } = require("../controllers/auth");
+const { signup, login } = require("../controllers/auth");
 
 router.put(
     '/signup',
