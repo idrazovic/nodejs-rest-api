@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 
 const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
 
 const MONGO_DB_URI = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@node-rest-api.axitvrv.mongodb.net/?retryWrites=true&w=majority&appName=node-rest-api`;
 
@@ -44,6 +45,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+
+app.use('/auth', authRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
