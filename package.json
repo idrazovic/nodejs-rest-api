@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "app.js",
     "scripts": {
-        "start": "nodemon --env-file=.env app.js",
+        "start": "nodemon --exec node -r ts-node/register --env-file=.env app.ts",
         "test": "mocha -r dotenv/config"
     },
     "author": "Igor Drazovic",
@@ -19,12 +19,18 @@
         "mongoose": "^8.4.4",
         "multer": "^1.4.5-lts.1",
         "nodemon": "^3.1.4",
-        "socket.io": "^4.7.5"
+        "socket.io": "^4.7.5",
+        "ts-node": "^10.9.2"
     },
     "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.6",
+        "@types/multer": "^1.4.11",
         "@types/sinon": "^17.0.3",
         "chai": "^5.1.1",
         "mocha": "^10.6.0",
-        "sinon": "^18.0.0"
+        "sinon": "^18.0.0",
+        "typescript": "^5.5.3"
     }
 }

@@ -1,12 +1,12 @@
-const path = require("path");
+import path from "path";
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const multer = require('multer');
+import express, { NextFunction, Request, Response } from "express";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import multer from 'multer';
 
-const feedRoutes = require('./routes/feed');
-const authRoutes = require('./routes/auth');
+import { feedRoutes } from './routes/feed';
+import { authRoutes } from './routes/auth';
 
 const MONGO_DB_URI = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@node-rest-api.axitvrv.mongodb.net/test?retryWrites=true&w=majority&appName=node-rest-api`;
 
@@ -21,7 +21,7 @@ const fileStorage = multer.diskStorage({
     }
 });
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
     if (
         file.mimetype === 'image/png' ||
         file.mimetype === 'image/jpg' ||
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     console.log(error);
     const status = error.statusCode || 500;
     const message = error.message;
@@ -59,7 +59,7 @@ mongoose.connect(MONGO_DB_URI)
     .then(() => {
         const server = app.listen(8080);
         const io = require('./socket').init(server);
-        io.on('connection', socket => {
+        io.on('connection', () => {
             console.log('Client connected');
         });
     }).catch(err => {
