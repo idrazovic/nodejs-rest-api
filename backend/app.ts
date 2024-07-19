@@ -1,9 +1,13 @@
 import path from "path";
+import fs from 'fs';
 
 import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import multer from 'multer';
+import helmet from "helmet";
+import compression from "compression";
+import morgan from "morgan";
 
 import { feedRoutes } from './routes/feed';
 import { authRoutes } from './routes/auth';
@@ -32,6 +36,12 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
         cb(null, false);
     }
 };
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('dev', { stream: accessLogStream }));
 
 app.use(bodyParser.json());
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
