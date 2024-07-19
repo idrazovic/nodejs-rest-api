@@ -4,9 +4,11 @@ import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import multer from 'multer';
+import { createHandler } from "graphql-http/lib/use/express";
+import { ruruHTML } from "ruru/server";
 
-import { feedRoutes } from './routes/feed';
-import { authRoutes } from './routes/auth';
+import { schema } from "./graphql/schema";
+import { root } from "./graphql/resolvers";
 
 const MONGO_DB_URI = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@node-rest-api.axitvrv.mongodb.net/test?retryWrites=true&w=majority&appName=node-rest-api`;
 
@@ -38,14 +40,26 @@ app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 app.use('images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+app.get("/", (_req, res) => {
+    res.type("html")
+    res.end(ruruHTML({ endpoint: "/graphql" }))
+})
+
+app.get("/", (_req, res) => {
+  res.type("html")
+  res.end(ruruHTML({ endpoint: "/graphql" }))
+})
+
+app.use('/graphql', createHandler({
+    schema,
+    rootValue: root
+}))
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     console.log(error);
@@ -58,10 +72,6 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 mongoose.connect(MONGO_DB_URI)
     .then(() => {
         const server = app.listen(8080);
-        const io = require('./socket').init(server);
-        io.on('connection', () => {
-            console.log('Client connected');
-        });
     }).catch(err => {
         console.log(err);
     });
